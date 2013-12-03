@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project default="createDoc" basedir="." name="Build">
+	<property environment="env"/>
+    <property name="yuicompress" location="${env.ANT_HOME}/buildtools/yuicompressor-2.4.7.jar"/>
+    <property name="jsHint" location="${env.ANT_HOME}/buildtools/ant-jshint-0.3.3-deps.jar" />
+    <property name="compiler" location="${env.ANT_HOME}/buildtools/compiler.jar" />
+	<property name="jsdoc-home" value="${env.ANT_HOME}/buildtools/jsdoc_toolkit-2.4.0/" />
+	<property name="jsjar" location="${env.ANT_HOME}/buildtools/js.jar" />
+	<property name="jsdoc" location="${env.ANT_HOME}/buildtools/jsdoc-toolkit-ant-task-1.1.2.jar" />
+	<property name="inputencoding" value="utf-8"/>
+	<property name="outputencoding" value="utf-8"/>
+    <property name="sourceDir" location="."/>
+
+    <taskdef name="jsdoctoolkit" classname="uk.co.darrenhurley.ant.tasks.JsDocToolkit">
+		<classpath>
+			<pathelement location="${jsdoc}" />
+			<pathelement location="${jsjar}" />
+		</classpath>
+	</taskdef>
+	<target name="date">
+        <tstamp>
+            <format property="build.time" pattern="yyyyMMddHHmm" locale="cn"/>
+        </tstamp>
+    </target>
+    <target name="createDoc" depends="date">
+		<jsdoctoolkit jsdochome="${jsdoc-home}" template="jsdoc" outputdir="./doc/" inputdir="./js/lib/" />
+    </target>
+</project>

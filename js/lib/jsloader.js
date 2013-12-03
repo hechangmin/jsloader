@@ -1,10 +1,12 @@
 /**
- * javascript loader
- * @author hechangmin@gmail.com
+ * @fileoverview javascript 模块加载器
+ * @author 	hechangmin@gmail.com
+ * @version 1.0.0
  * @date	2013.12
  */
 
 (function(global, undefined) {
+
 	var modsCache 	= {},
 		fnsCache 	= {},
 		head 		= document.head || document.getElementsByTagName('head')[0] || document.documentElement,
@@ -15,6 +17,19 @@
 			alias 	: {}
 		};
 
+	if(global.jsloader){
+		return;
+	}else{
+		global.jsloader = jsloader;
+	}
+
+	/**
+	 * @name 	jsloader
+	 * @constructor
+	 * @class  模块定义及文件模块加载
+	 * @param  {json} params 配置文件 可以设置编码，也可以配置别名
+	 * @example jsloader({charset : 'gbk', debug : false, alias : {a : 'js/abc.js'}});
+	 */
 	var jsloader = function (params) {
 	    if(undefined != params){
 	    	for(var option in params){
@@ -23,15 +38,18 @@
 	    }
 	};
 
+   /**
+	* @description {Sting} 版本
+	* @field
+	*/
 	jsloader.version = '1.0.0';
 
-	if(global.jsloader){
-		return;
-	}else{
-		global.jsloader = jsloader;
-	}
-
-	global.define = jsloader.define = function(factory) {
+	/**
+	 * @description 模块定义[暴露给外部直接可用]
+	 * @param  {Function} factory 模块构造工厂,在被加载的时候，如果是函数，则会加载函数的执行结果，其他类型直接加载。
+	 * @return global.define  = jsloader.define;
+	 */
+	jsloader.define = function(factory) {
 		var url = getCurScript();
 
 		if (undefined === modsCache[url]) {
@@ -45,7 +63,13 @@
 		}
 	};
 
-	global.require = jsloader.require = function(url, callback) {
+	/**
+	 * @description 模块加载[暴露给外部直接可用]
+	 * @param  {string or array} url 单个或一组url
+	 * @param  {function} callback  加载完成后的回调函数
+	 * @return global.require = jsloader.require;
+	 */
+	jsloader.require = function(url, callback) {
 		var checkRet = checkAndFixUrl(url), key, script;
 
 		if (checkRet.hadChange) {
@@ -282,4 +306,8 @@
 			}
 		};
 	};
+
+	global.define  = jsloader.define;
+	global.require = jsloader.require;
+
 })(this);
