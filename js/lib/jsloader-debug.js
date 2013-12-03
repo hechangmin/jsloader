@@ -3,6 +3,7 @@
  * @author 	hechangmin@gmail.com
  * @version 1.0.0
  * @date	2013.12
+ * Released under the MIT license
  */
 
 (function(global, undefined) {
@@ -310,4 +311,4 @@
 	global.define  = jsloader.define;
 	global.require = jsloader.require;
 
-})(this);
+})(window);
