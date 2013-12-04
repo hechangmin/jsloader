@@ -28,13 +28,13 @@
 	 * @name 	jsloader
 	 * @constructor
 	 * @class  模块定义及文件模块加载
-	 * @param  {json} params 配置文件 可以设置编码，也可以配置别名
+	 * @param  {json} options 配置文件 可以设置编码，也可以配置别名
 	 * @example jsloader({charset : 'gbk', debug : false, alias : {a : 'js/abc.js'}});
 	 */
-	var jsloader = function (params) {
-	    if(undefined != params){
-	    	for(var option in params){
-				setting[option] = params[option];
+	var jsloader = function (options) {
+	    if(undefined !== options){
+	    	for(var option in options){
+				setting[option] = options[option];
 			}
 	    }
 	};
@@ -109,7 +109,7 @@
 
 	var debug = function(msg){
 		if(setting.debug){
-			if(undefined !== typeof console){
+			if(undefined !== console){
 				console.error(msg);
 			}else{
 				alert(msg);
