@@ -18,12 +18,6 @@
 			alias 	: {}
 		};
 
-	if(global.jsloader){
-		return;
-	}else{
-		global.jsloader = jsloader;
-	}
-
 	/**
 	 * @name 	jsloader
 	 * @constructor
@@ -38,6 +32,12 @@
 			}
 	    }
 	};
+
+	if(global.jsloader){
+		return;
+	}else{
+		global.jsloader = jsloader;
+	}
 
    /**
 	* @description {Sting} 版本
