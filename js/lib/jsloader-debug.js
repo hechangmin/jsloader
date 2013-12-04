@@ -39,10 +39,10 @@
 		global.jsloader = jsloader;
 	}
 
-   /**
-	* @description {Sting} 版本
-	* @field
-	*/
+	/**
+	 * @description {Sting} 版本
+	 * @field
+	 */
 	jsloader.version = '1.0.0';
 
 	/**
