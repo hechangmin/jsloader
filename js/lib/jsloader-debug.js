@@ -109,7 +109,7 @@
 
 	var debug = function(msg){
 		if(setting.debug){
-			if(undefined !== console){
+			if('undefined' !== typeof console){
 				console.error(msg);
 			}else{
 				alert(msg);
