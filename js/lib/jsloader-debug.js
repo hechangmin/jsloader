@@ -226,9 +226,9 @@
     var callbackRouter = function(url) {
         return function() {
             if ('function' === typeof fnsCache[url]) {
-                setTimeout(function() {
-                    fnsCache[url].apply(arnull, modsCache[url]);
-                });
+                //setTimeout(function() {
+                    fnsCache[url].apply(null, modsCache[url]);
+                //});
             }
         };
     };
