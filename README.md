@@ -11,7 +11,7 @@
 1. jsloader 不会要求参数的id 必须是直接量;
 2. jsloader 我们对你要加载的模块形式几乎没限制。
 
-接口少，你需要用到的，只有两个define 及require 。
+接口少，你需要用到的，只有define 及require 。
 
 一句话，你可以很自由的使用！
 
