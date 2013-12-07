@@ -12,6 +12,8 @@
         fnsCache = {},
         head = document.head || document.getElementsByTagName('head')[0] || document.documentElement,
         separator = '@_@',
+        curModIndex = [],
+        modIndex    = [],
         setting = {
             charset: 'utf-8',
             debug: false,
@@ -48,17 +50,36 @@
     /**
      * @description 模块定义[暴露给外部直接可用]
      * @param  {Function} factory 模块构造工厂,在被加载的时候，如果是函数，则会加载函数的执行结果，其他类型直接加载。
+     * @param {json} deps 模块需要的依赖,形如：{moduleA : url}
      * @return global.define  = jsloader.define;
      */
-    jsloader.define = function(factory) {
+    jsloader.define = function(factory, deps) {
         var url = getCurScript();
 
         if (undefined === modsCache[url]) {
             modsCache[url] = [];
         }
 
+        if(undefined == curModIndex[url]){
+            curModIndex[url] = 0;
+        }else{
+            curModIndex[url]++;
+        }
+
         try {
-            modsCache[url].push(typeof factory === 'function' ? factory() : factory);
+            if(deps){
+                for(var m in deps){
+                    require(deps[m],function(index){
+                        return function(m){
+                            logIndex(url,index);
+                            modsCache[url].push(typeof factory === 'function' ? factory(m) : factory);
+                        }
+                    }(curModIndex[url]));
+                }
+            }else{
+                logIndex(url,curModIndex[url]);
+                modsCache[url].push(typeof factory === 'function' ? factory() : factory);
+            }
         } catch (e) {
             debug('run the define error. \n' + url);
         }
@@ -72,7 +93,8 @@
      */
     jsloader.require = function(url, callback) {
         var checkRet = checkAndFixUrl(url),
-            key, script;
+            key,
+            script;
 
         if (checkRet.hadChange) {
             require(checkRet.urls, callback);
@@ -80,7 +102,9 @@
         }
 
         if (isArray(url)) {
+
             key = url.join(separator);
+
             for (var i = 0, item; item = url[i++];) {
                 require(item, callBackWrapper(key, callback), !0);
             }
@@ -93,12 +117,12 @@
             }
 
             if (undefined === modsCache[url]) {
+                modsCache[url] = [];
                 script = document.createElement('script');
                 script.charset = getUrlParam('charset', url) || setting.charset;
                 script.src = url;
                 bindLoad(script, arguments[2] ? callback : callbackRouter(url));
                 head.insertBefore(script, head.firstChild);
-                modsCache[url] = [];
             } else if (modsCache[url].length > 0) {
                 arguments[2] ? callback() : callbackRouter(url)();
             }
@@ -106,6 +130,26 @@
         } else {
             debug('require params error.');
         }
+    };
+
+    var logIndex = function(url, index){
+        if(undefined == modIndex[url]){
+            modIndex[url] = [index];
+        }else{
+            modIndex[url].push(index);
+        }
+    };
+
+    var sortMod = function(url){
+        var mod = modsCache[url],
+            index = modIndex[url],
+            arrRet = [];
+
+        for(var i = 0, n = mod.length; i < n; i++){
+            arrRet[index[i]] = mod[i];
+        }
+
+        return arrRet;
     };
 
     var debug = function(msg) {
@@ -226,9 +270,13 @@
     var callbackRouter = function(url) {
         return function() {
             if ('function' === typeof fnsCache[url]) {
-                //setTimeout(function() {
-                    fnsCache[url].apply(null, modsCache[url]);
-                //});
+                if(modsCache[url]
+                    && modsCache[url].length
+                    && fnsCache[url].length <= modsCache[url].length){
+                        fnsCache[url].apply(null, sortMod(url));
+                }else{
+                    setTimeout(arguments.callee,20);
+                }
             }
         };
     };
@@ -241,6 +289,7 @@
                     args = [];
 
                 for (var i = 0, item; item = arrUrl[i++];) {
+
                     if (modsCache[item] && modsCache[item].length) {
                         args = args.concat(modsCache[item]);
                     } else {
@@ -248,9 +297,12 @@
                     }
                 }
 
-                setTimeout(function() {
-                    callback.apply(null, args);
-                });
+                if(callback.length > args.length){
+                    setTimeout(arguments.callee,20);
+                    return;
+                }
+                //fnsCache[url].apply(null, sortMod(url));
+                callback.apply(null, args);
             }
         };
     };

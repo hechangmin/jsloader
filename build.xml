@@ -51,9 +51,9 @@
         </replaceregexp>
     </target>
     <target name="changeVersion" depends="init">
-    	<replaceregexp match="jsloader.min.js(\?v=\d+)?" replace="jsloader.min.js?v=${date}" flags="g" byline="true" encoding="UTF-8">
+    	<replaceregexp match="jsloader-debug.js(\?v=\d+)?" replace="jsloader.min.js?v=${date}" flags="g" byline="true" encoding="UTF-8">
             <fileset dir=".">
-                <include name="demo.html"/>
+                <include name="*.html"/>
             </fileset>
     	</replaceregexp>
     </target>
