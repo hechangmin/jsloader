@@ -1,5 +1,3 @@
-FAQ：
-
 jsloader 是什么？
 
 jsloader 是javascript 模块加载器。
@@ -19,18 +17,27 @@ jsloader 是javascript 模块加载器。
 
 ===========================
 
-如果对加载的JS 编码有要求，可以使用 jsloader({charset:***});
-如果你要加载的JS 中并非都是一种编码，可以在 url 加参数 ：
+对加载的JS 编码有要求，可以使用 jsloader({charset:***});
 
-比如 ：require('static/js/lib/c?charset=utf-8',function(){...});
+如果你要加载的JS 中并非都是一种编码，可以在 url 加参数 ：
+比如 ：require(['static/js/lib/c?charset=utf-8'],function(){...});
 
 如果还有疑问，可以参考demo.html 以及 doc 目录下的代码文档。
 
-===========================
+==========================
 
-建议：
+注意：
 
-    1. 尽量遵守一个模块一个文件,一个文件一个模块的约定，如果业务需要合并文件，请参考第三条建议；
-    2. 不要循环依赖(A 模块依赖B 模块，B 模块依赖A模块 );
-    3. 如果合并压缩文件，合并后的文件内部，不要出现模块互相依赖。A模块，B模块合并成一个文件，不要出现A 依赖B 或者 B 依赖A ；
-    4. 如果你觉得很难接受，我推荐你使用seajs.
+1 .模块定义不能延迟定义，比如下面这两种写法：
+
+a.
+
+ define(function(c,d){
+     return {m1 : c[0], m2 : d[0]};
+ },["js/demo4/c","js/demo4/d"]);
+
+ b.
+
+require(["js/demo4/c","js/demo4/d"], function(c,d){
+    define({m1 : c[0], m2 : d[0]}); //由于定义放在了回调里，执行时机要等待依赖先注入，所以这里的定义会出错。请参考a的写法。
+});
