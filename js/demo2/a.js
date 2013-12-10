@@ -1,9 +1,9 @@
 define(function(){
-    var name = "a";
+    var name = "aaaaaaaaa";
     return name;
 });
 
 define(function(){
-    var name = "b";
+    var name = "bbbbbbbbb";
     return name;
 });

@@ -13,6 +13,7 @@
         separator = '@_@',
         curModIndex = [],
         modIndex = [],
+        timer = {},
         setting = {
             charset: 'utf-8',
             debug: false,
@@ -150,29 +151,34 @@
 
     var callbackRouter = function(id) {
         return function() {
-            var url,
-                urls = id.split(separator),
+            var urls = id.split(separator),
                 args = [],
+                mod,
                 callback = fnsCache[id];
+            try{
+                for (var i = 0, url; url = urls[i++];) {
+                    if (modsCache[url] && modsCache[url].length && (curModIndex[url] + 1) == modsCache[url].length) {
+                        mod = sortMod(url);
 
-            for (var i = 0, nLength = urls.length; i < nLength; i++) {
-                url = urls[i];
-                if (modsCache[url] && modsCache[url].length
-                    // url 所有模块都加载完
-                    && (curModIndex[url] + 1) == modsCache[url].length) {
-                    args.push(sortMod(url));
-                } else {
-                    setTimeout(arguments.callee, 20);
-                    return;
+                        if(1 == mod.length){
+                            args.push(mod[0]);
+                        }else{
+                            args.push(mod);
+                        }
+                    } else {
+                        throw {};
+                    }
                 }
-            }
-
-            // 模块数量 不能少于 回调函数的形参个数
-            if (callback.length > args.length) {
-                setTimeout(arguments.callee, 20);
+                // 模块数量 不能少于 回调函数的形参个数
+                if (callback.length > args.length) {
+                    throw {};
+                }
+            }catch(e){
+                clearTimeout(timer[id]);
+                timer[id] = setTimeout(arguments.callee, 20);
                 return;
             }
-
+            clearTimeout(timer[id]);
             callback.apply(null, args);
         };
     };

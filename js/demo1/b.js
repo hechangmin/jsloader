@@ -1,4 +1,4 @@
 define(function(){
-    var name = "b";
+    var name = "bbbbbbbbbbb";
     return name;
 });

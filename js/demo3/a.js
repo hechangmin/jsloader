@@ -4,6 +4,6 @@ define(function(x){
 },["js/demo3/c"]);
 
 define(function(){
-    var name = "b";
+    var name = "bbbbbb";
     return name;
 });

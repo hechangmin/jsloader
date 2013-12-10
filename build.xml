@@ -50,11 +50,18 @@
             <file name="${sourceDir}/js/lib/jsloader.js.map" />
         </replaceregexp>
     </target>
-    <target name="changeVersion" depends="init">
+    <target name="change2release" depends="init">
     	<replaceregexp match="jsloader-debug.js(\?v=\d+)?" replace="jsloader.min.js?v=${date}" flags="g" byline="true" encoding="UTF-8">
             <fileset dir=".">
                 <include name="*.html"/>
             </fileset>
     	</replaceregexp>
+    </target>
+    <target name="change2debug" depends="init">
+        <replaceregexp match="jsloader.min.js(\?v=\d+)?" replace="jsloader-debug.js?v=${date}" flags="g" byline="true" encoding="UTF-8">
+            <fileset dir=".">
+                <include name="*.html"/>
+            </fileset>
+        </replaceregexp>
     </target>
 </project>
