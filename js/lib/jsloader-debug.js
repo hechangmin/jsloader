@@ -9,7 +9,6 @@
 (function(global, undefined) {
     var modsCache = {},
         fnsCache = {},
-        modsDeps = {},
         head = document.head || document.getElementsByTagName('head')[0] || document.documentElement,
         separator = '@_@',
         curModIndex = [],
