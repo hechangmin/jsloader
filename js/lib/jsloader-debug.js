@@ -15,9 +15,10 @@
         modIndex = [],
         timer = {},
         setting = {
-            charset: 'utf-8',
-            debug: false,
-            alias: {}
+            charset : 'utf-8',
+            debug : false,
+            cache : true,
+            alias : {}
         };
 
     /**
@@ -58,7 +59,7 @@
     };
 
     //根据当初调用define的顺序，对模块排序
-    var sortMod = function(url) {
+    var sort = function(url) {
 
         var mod = modsCache[url],
             index = modIndex[url],
@@ -79,6 +80,10 @@
      */
     jsloader.define = function(factory, deps) {
         var url = getCurScript();
+
+        if(!setting.cache){
+            url = url.replace(/[\?&]{1}__jsloader__=\d*/, '');
+        }
 
         if (undefined == curModIndex[url]) {
             //记录同一个url中,当前是第几次调用define函数
@@ -158,7 +163,7 @@
             try{
                 for (var i = 0, url; url = urls[i++];) {
                     if (modsCache[url] && modsCache[url].length && (curModIndex[url] + 1) == modsCache[url].length) {
-                        mod = sortMod(url);
+                        mod = sort(url);
 
                         if(1 == mod.length){
                             args.push(mod[0]);
@@ -199,8 +204,21 @@
     };
 
     var loadJS = function(url, fnCallBack) {
-        var script = document.createElement('script');
+        var q, c='?', script = document.createElement('script');
         script.charset = getUrlParam('charset', url) || setting.charset;
+
+        if(!setting.cache){
+            q = Math.floor(new Date().getTime() * Math.random());
+
+            if(url.indexOf(c) > -1){
+                c = '&'
+            }
+
+            url += c;
+            url += '__jsloader__=';
+            url += q;
+        }
+
         script.src = url;
         bindLoad(script, fnCallBack);
         head.insertBefore(script, head.firstChild);
