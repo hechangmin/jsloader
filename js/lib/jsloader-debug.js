@@ -1,6 +1,7 @@
 /**
  * @fileoverview javascript 模块加载器
- * @author     hechangmin@gmail.com
+ * https://github.com/hechangmin/jsloader
+ * @author  hechangmin@gmail.com
  * @version 1.0.0
  * @date    2013.12
  * Released under the MIT license
@@ -332,23 +333,13 @@
         }
     };
 
-    var isArray = function(obj) {
-        if (Array.isArray) {
-            return Array.isArray(obj)
-        }
-
-        if ('object' === typeof obj) {
-            if (Array === obj.constructor) {
-                return true;
-            }
-        }
-
-        return false;
+    var isArray = Array.isArray || function (obj) {
+        return ({}).toString.call(obj) === '[object Array]';
     };
 
     var debug = function(msg) {
         if (setting.debug) {
-            if ('undefined' !== typeof console) {
+            if(global.console) {
                 console.error(msg);
             } else {
                 alert(msg);
