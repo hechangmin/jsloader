@@ -94,7 +94,7 @@
         }
 
         if (undefined === modsCache[url]) {
-            //一个url下对应的模块都缓存起来
+            //缓存url对应模块
             //简单点理解调用了几次define 就有多少个模块
             //最后加载完，应有 ：modsCache[url].length == curModIndex[url] + 1
             modsCache[url] = [];
