@@ -20,15 +20,16 @@ _注意:_
 ---------------------------
 > * config 可以配置编码，是否开启调试模式，以及文件别名：
 ```js
-    var opts = {
-        charset : 'utf-8',
-        debug : false,
-        alias : {}
-    };
-    jsloader.config(opts);
+   var opts = {
+      charset : 'utf-8',
+      debug : false,
+      alias : {}
+   };
+   jsloader.config(opts);
 ```
 > * 可能会被大家诟病的一个点：
     var m = require('m'); 这种写法，不支持。原因如下：
+
     **我提倡：异步加载的结果，请在回调里使用。**
 
 > * 模块依赖关系中，定义不能延迟，这个需要举例说明，比如下面这两种写法：
@@ -50,7 +51,7 @@ require(["js/demo4/c","js/demo4/d"], function(c,d){
 
 更新日志:
 ---------------------------
-*2013.12.30
+* 2013.12.30
    * 由于代码真的很简单，我将doc自动生成的文档删掉了。
    * 增加data-main 逻辑；
    * 增加 script.async = true;
