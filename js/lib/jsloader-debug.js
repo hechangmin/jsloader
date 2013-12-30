@@ -110,7 +110,7 @@
 
     var init = function(){
         var scripts = document.getElementsByTagName("script"),
-            loaderScript = document.getElementById("loader-node") || scripts[scripts.length - 1],
+            loaderScript = scripts[scripts.length - 1],
             dataMain = loaderScript.getAttribute("data-main");
 
         if (dataMain) {
