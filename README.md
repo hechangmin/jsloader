@@ -20,12 +20,12 @@ _注意:_
 ---------------------------
 > * config 可以配置编码，是否开启调试模式，以及文件别名：
 ```js
-   var opts = {
-      charset : 'utf-8',
-      debug : false,
-      alias : {}
-   };
-   jsloader.config(opts);
+var opts = {
+  charset : 'utf-8',
+  debug : false,
+  alias : {}
+};
+jsloader.config(opts);
 ```
 > * 可能会被大家诟病的一个点：
     var m = require('m'); 这种写法，不支持。
