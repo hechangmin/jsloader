@@ -1,90 +1,42 @@
 /**
- * @fileoverview javascript 模块加载器
+ * javascript 模块加载器
  * https://github.com/hechangmin/jsloader
- * @author  hechangmin@gmail.com
- * @version 1.0.0
+ * @author  hechangmin
+ * @version 1.1.0
  * @date    2013.12
  * Released under the MIT license
  */
 
 (function(global, undefined) {
-    var modsCache = {},
-        fnsCache = {},
-        head = document.head || document.getElementsByTagName('head')[0] || document.documentElement,
+    var mods = {},
+        fns = {},
         separator = '@_@',
         curModIndex = [],
         modIndex = [],
         timer = {},
-        setting = {
+        configs = {
             charset : 'utf-8',
             debug : false,
-            cache : true,
             alias : {}
         };
 
     /**
-     * @name     jsloader
-     * @constructor
-     * @class  模块定义及文件模块加载
-     * @param  {json} options 配置文件 可以设置编码，也可以配置别名
-     * @example jsloader({charset : 'gbk', debug : false, alias : {a : 'js/abc.js'}});
+     * @description 配置
+     * @param {array} opts  eg. {charset : 'utf-8', debug : false, alias : {}}
      */
-    var jsloader = function(options) {
-        if (undefined !== options) {
-            for (var option in options) {
-                setting[option] = options[option];
-            }
+    var config = function(opts) {
+        for (var opt in opts) {
+            configs[opt] = opts[opt];
         }
     };
 
     /**
-     * @description {Sting} 版本
-     * @field
-     */
-    jsloader.version = '1.0.0';
-
-    if (global.jsloader) {
-        return;
-    } else {
-        global.jsloader = jsloader;
-    }
-
-    //记录依赖中的顺序
-    var logIndex = function(url, index) {
-
-        if (undefined == modIndex[url]) {
-            modIndex[url] = [index];
-        } else {
-            modIndex[url].push(index);
-        }
-    };
-
-    //根据当初调用define的顺序，对模块排序
-    var sort = function(url) {
-
-        var mod = modsCache[url],
-            index = modIndex[url],
-            arrRet = [];
-
-        for (var i = 0, n = mod.length; i < n; i++) {
-            arrRet[index[i]] = mod[i];
-        }
-
-        return arrRet;
-    };
-
-    /**
-     * @description 模块定义[暴露给外部直接可用]
-     * @param  {Function} factory 模块构造工厂,在被加载的时候，如果是函数，则会加载函数的执行结果，其他类型直接加载。
+     * @description 模块定义
+     * @param  {Function} factory 模块构造工厂,函数则加载其执行结果，其他类型直接加载。
      * @param {array} deps 模块需要的依赖
-     * @return global.define  = jsloader.define;
      */
-    jsloader.define = function(factory, deps) {
+    var define = function(factory, deps) {
         var url = getCurScript();
-
-        if(!setting.cache){
-            url = url.replace(/[\?&]{1}__jsloader__=\d*/, '');
-        }
 
         if (undefined == curModIndex[url]) {
             //记录同一个url中,当前是第几次调用define函数
@@ -93,33 +45,35 @@
             curModIndex[url]++;
         }
 
-        if (undefined === modsCache[url]) {
+        if (undefined === mods[url]) {
             //缓存url对应模块
             //简单点理解调用了几次define 就有多少个模块
-            //最后加载完，应有 ：modsCache[url].length == curModIndex[url] + 1
-            modsCache[url] = [];
+            //最后加载完，应有 ：mods[url].length == curModIndex[url] + 1
+            mods[url] = [];
         }
 
         try {
             //有依赖的情况
             if (undefined !== deps && 'function' === typeof factory) {
+
                 deps = 'string' == typeof deps ? [deps] : deps;
 
                 if (!isArray(deps)) {
-                    debug('param[deps] is error . \n' + url);
+                    debug('param[deps] is error . \n');
                     throw Error('');
                 }
 
                 require(deps, function(index) {
                     return function() {
                         logIndex(url, index);
-                        modsCache[url].push(factory.apply(null, arguments));
+                        mods[url].push(factory.apply(null, arguments));
                     }
                 }(curModIndex[url]));
-                //无依赖的情况
+
+            //无依赖的情况
             } else {
                 logIndex(url, curModIndex[url]);
-                modsCache[url].push(typeof factory === 'function' ? factory() : factory);
+                mods[url].push(typeof factory === 'function' ? factory() : factory);
             }
         } catch (e) {
             debug('run the define error. \n' + url);
@@ -127,27 +81,26 @@
     };
 
     /**
-     * @description 模块加载[暴露给外部直接可用]
+     * @description 模块引入
      * @param  {string or array} urls 单个或一组url
-     * @param  {function} callback  加载完成后的回调函数
-     * @return global.require = jsloader.require;
+     * @param  {function} callback 加载完成后的回调函数
      */
-    jsloader.require = function(urls, callback) {
+    var require = function(urls, callback) {
         var id, callBackWrapper;
 
         urls = checkAndFixUrl(urls);
         id = urls.join(separator);
 
         if ('function' === typeof callback) {
-            fnsCache[id] = callback;
+            fns[id] = callback;
         } else {
-            debug('require params error.\n' + id);
+            debug('params[callback] error in require. \n' + id);
         }
 
         callBackWrapper = callbackRouter(id);
 
         for (var i = 0, url; url = urls[i++];) {
-            if (undefined === modsCache[url]) {
+            if (undefined === mods[url]) {
                 loadJS(url, callBackWrapper);
             } else {
                 callBackWrapper();
@@ -155,15 +108,24 @@
         }
     };
 
+    var init = function(){
+        var scripts = document.getElementsByTagName("script"),
+            loaderScript = document.getElementById("loader-node") || scripts[scripts.length - 1],
+            dataMain = loaderScript.getAttribute("data-main");
+
+        if (dataMain) {
+            require(dataMain);
+        }
+    };
     var callbackRouter = function(id) {
         return function() {
             var urls = id.split(separator),
                 args = [],
                 mod,
-                callback = fnsCache[id];
+                callback = fns[id];
             try{
                 for (var i = 0, url; url = urls[i++];) {
-                    if (modsCache[url] && modsCache[url].length && (curModIndex[url] + 1) == modsCache[url].length) {
+                    if (mods[url] && mods[url].length && (curModIndex[url] + 1) == mods[url].length) {
                         mod = sort(url);
 
                         if(1 == mod.length){
@@ -189,12 +151,36 @@
         };
     };
 
+    //记录依赖中的顺序
+    var logIndex = function(url, index) {
+
+        if (undefined == modIndex[url]) {
+            modIndex[url] = [index];
+        } else {
+            modIndex[url].push(index);
+        }
+    };
+
+    //根据当初调用define的顺序，对模块排序
+    var sort = function(url) {
+
+        var mod = mods[url],
+            index = modIndex[url],
+            arrRet = [];
+
+        for (var i = 0, n = mod.length; i < n; i++) {
+            arrRet[index[i]] = mod[i];
+        }
+
+        return arrRet;
+    };
+
     var checkAndFixUrl = function(urls) {
         var Ret = [];
         urls = 'string' === typeof urls ? [urls] : urls;
 
         for (var i = 0, url; url = urls[i++];) {
-            url = setting['alias'][url] ? setting['alias'][url] : url;
+            url = configs['alias'][url] ? configs['alias'][url] : url;
             url = fillBasePath(url);
             url = fillExtension(url);
             url = getRealPath(url);
@@ -205,20 +191,12 @@
     };
 
     var loadJS = function(url, fnCallBack) {
-        var q, c='?', script = document.createElement('script');
-        script.charset = getUrlParam('charset', url) || setting.charset;
+        var q,
+            c='?',
+            script = document.createElement('script'),
+            head = document.head || document.getElementsByTagName('head')[0] || document.documentElement;
 
-        if(!setting.cache){
-            q = Math.floor(new Date().getTime() * Math.random());
-
-            if(url.indexOf(c) > -1){
-                c = '&'
-            }
-
-            url += c;
-            url += '__jsloader__=';
-            url += q;
-        }
+        script.charset = getUrlParam('charset', url) || configs.charset;
 
         script.async = true;
         script.src = url;
@@ -339,7 +317,7 @@
     };
 
     var debug = function(msg) {
-        if (setting.debug) {
+        if (configs.debug) {
             if(global.console) {
                 console.error(msg);
             } else {
@@ -348,6 +326,20 @@
         }
     };
 
-    global.define = jsloader.define;
-    global.require = jsloader.require;
+    init();
+
+    //public
+    if(undefined === window.jsloader)
+    {
+        window.jsloader = {
+            version : '1.1.0',
+            config : config,
+            define : define,
+            require : require
+        };
+
+        window.define = jsloader.define;
+        window.require = jsloader.require;
+    }
+
 })(window);

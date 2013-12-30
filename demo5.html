@@ -5,13 +5,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=100">
 </head>
 <body>
-    <h2>加载单个模块，url非数组的情况。</h2>
+    <h2>模块中有依赖的情况。</h2>
     <div class="header_wrapper">
         <div id="a"></div>
         <div id="b"></div>
         <div id="c"></div>
     </div>
-<script type="text/javascript" src="js/lib/jsloader.min.js?v=201312301714"></script>
-<script type="text/javascript" src="js/demo/index.js"></script>
+<script type="text/javascript" id="loader-node" data-main='js/demo5/index' src="js/lib/jsloader.min.js?v=201312301801"></script>
 </body>
 </html>

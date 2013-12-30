@@ -1,1 +1,1 @@
-ant createDoc compressJS addJsmapInfo fixJsMap change2release > build.log
+ant compressJS addJsmapInfo fixJsMap change2release > build.log
