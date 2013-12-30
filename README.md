@@ -19,14 +19,16 @@ jsloader 是什么？
 _注意:_
 ---------------------------
 > * config 可以配置编码，是否开启调试模式，以及文件别名：
+
 ```js
 var opts = {
-  charset : 'utf-8',
-  debug : false,
-  alias : {}
+    charset : 'utf-8',
+    debug : false,
+    alias : {}
 };
 jsloader.config(opts);
 ```
+
 > * 可能会被大家诟病的一个点：
     var m = require('m'); 这种写法，不支持。
 > 原因如下：我提倡：异步加载的结果，请在回调里使用。
