@@ -220,6 +220,7 @@
             url += q;
         }
 
+        script.async = true;
         script.src = url;
         bindLoad(script, fnCallBack);
         head.insertBefore(script, head.firstChild);
