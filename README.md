@@ -14,11 +14,13 @@ jsloader 是什么？
 
 对外只暴露一个字段jsloader.version ：用来判断下是否与官方最新版本一致。
 
-推荐在jsloader.js 所在script增加：data-main='js/demo5/index'， 会使逻辑更加清晰。
+推荐在jsloader.js 所在script增加：id='loader-node' data-main='js/demo5/index'， 会使逻辑更加清晰。
 
 _注意:_
 ---------------------------
+
 > * config 可以配置编码，是否开启调试模式，以及文件别名：
+
 
 ```js
 var opts = {
@@ -28,6 +30,7 @@ var opts = {
 };
 jsloader.config(opts);
 ```
+
 
 > * 可能会被大家诟病的一个点：
     var m = require('m'); 这种写法，不支持。
@@ -41,6 +44,8 @@ jsloader.config(opts);
  },["js/demo4/c","js/demo4/d"]);
 ```
 
+
+
 ```js
 require(["js/demo4/c","js/demo4/d"], function(c,d){
     //由于define放在了 require 回调里，执行时机要等待依赖先注入，这里的会出错。
@@ -48,16 +53,21 @@ require(["js/demo4/c","js/demo4/d"], function(c,d){
     define({m1 : c[0], m2 : d[0]});
 });
 ```
+
 辅助理解记忆：先定义在加载。（define 和 require 在一起的时候，让define在前面。）
 
 更新日志:
 ---------------------------
 * 2013.12.30
-   * 由于代码真的很简单，我将doc自动生成的文档删掉了。
-   * 增加data-main 逻辑；
+   * 由于代码真的很简单，所以将doc自动生成的文档删掉了;
+   * 增加data-main 逻辑;
    * 增加 script.async = true;
-   * node_modules 添加进忽略列表；
-   * 使用grunt替换掉现在的ant
+   * node_modules 添加进忽略列表;
+   * 使用grunt替换掉现在的ant.
+
+* 2013.12.31
+   * 为jsloader script 增加id=loader-node;
+   * 增加配置项base ，所有的非协议头路径都将尝试加上这个路径。
 
 --------------------------------
 

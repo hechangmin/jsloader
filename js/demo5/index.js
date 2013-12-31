@@ -1,11 +1,8 @@
+
 jsloader.config({
-   charset : 'gbk',
-   debug : true,
-   alias : {
-        a : 'js/demo5/a.js',
-        c : 'js/demo5/c.js',
-        d : 'js/demo5/d.js',
-   }
+   base : 'js/demo5/',
+   charset : 'utf-8',
+   debug : true
 });
 
 define(function(a){

@@ -15,6 +15,7 @@
         modIndex = [],
         timer = {},
         configs = {
+            base : '',
             charset : 'utf-8',
             debug : false,
             alias : {}
@@ -36,6 +37,7 @@
      * @param {array} deps 模块需要的依赖
      */
     var define = function(factory, deps) {
+
         var url = getCurScript();
 
         if (undefined == curModIndex[url]) {
@@ -110,11 +112,11 @@
 
     var init = function(){
         var scripts = document.getElementsByTagName("script"),
-            loaderScript = scripts[scripts.length - 1],
+            loaderScript = document.getElementById("loader-node") || scripts[scripts.length - 1],
             dataMain = loaderScript.getAttribute("data-main");
 
         if (dataMain) {
-            require(dataMain);
+            require(dataMain, function(){});
         }
     };
     var callbackRouter = function(id) {
@@ -197,22 +199,24 @@
             head = document.head || document.getElementsByTagName('head')[0] || document.documentElement;
 
         script.charset = getUrlParam('charset', url) || configs.charset;
-
+        bindLoad(script, fnCallBack);
         script.async = true;
         script.src = url;
-        bindLoad(script, fnCallBack);
         head.insertBefore(script, head.firstChild);
     };
 
     var bindLoad = function(script, callback) {
         script.onload = script.onreadystatechange = function() {
             if (!script.readyState || /loaded|complete/.test(script.readyState)) {
+
+                callback();
+
                 script.onload = script.onreadystatechange = null;
+
                 if (script.parentNode) {
                     script.parentNode.removeChild(script);
                 }
                 script = null;
-                callback();
             }
         };
     };
@@ -262,10 +266,29 @@
     var fillBasePath = function(path) {
         var pattern = /(^file:\/\/)|(^http:\/\/)|(^https:\/\/)/,
             pattern2 = /(^\/)/,
-            dir_separator = '/';
+            pattern3 = /(\/$)/,
+            dir_separator = '/',
+            base = configs['base'];
 
         if (!pattern.test(path)) {
-            path = getBaseUrl() + (pattern2.test(path) ? '' : dir_separator) + path;
+
+            if(pattern3.test(base)){
+                if(pattern2.test(path)){
+                    path = base + path.substr(1);
+                }else{
+                    path = base + path;
+                }
+            }else{
+                if(pattern2.test(path)){
+                    path = base + path;
+                }else{
+                    path = base + dir_separator + path;
+                }
+            }
+
+            if (!pattern.test(base)) {
+                path = getBaseUrl() + (pattern2.test(path) ? '' : dir_separator) + path;
+            }
         }
 
         return path;
