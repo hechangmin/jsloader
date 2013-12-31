@@ -69,6 +69,15 @@ require(["js/demo4/c","js/demo4/d"], function(c,d){
    * 为jsloader script 增加id=loader-node;
    * 增加配置项base ，所有的非协议头路径都将尝试加上这个路径。
 
+```js
+jsloader.config({
+   base : 'js/demo5/',
+   charset : 'utf-8',
+   debug : true
+});
+```
+
+
 --------------------------------
 
 如果有使用上的疑问，请参照demo.html、demo1~5.html。
