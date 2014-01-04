@@ -5,8 +5,8 @@ jsloader.config({
    debug : true
 });
 
-define(function(a){
-    document.getElementById('a').innerHTML = a[0]['m1'];
-    document.getElementById('b').innerHTML = a[0]['m2'];
-    document.getElementById('c').innerHTML = a[1];
-},["a"]);
+define(["a"], function(a){
+    document.getElementById('a').innerHTML = a[0].name;
+    document.getElementById('b').innerHTML = a[0].val;
+    document.getElementById('c').innerHTML = a[1].val;
+});

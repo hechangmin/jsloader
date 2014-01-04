@@ -1,10 +1,8 @@
 
-define(function(c,d){
-    return {m1 : c, m2 : d};
-},["c","d"]);
-
+define(["c","d"], function(c,d){
+    return {name : 'aaa', val : (c.val + d.val)};
+});
 
 define(function(){
-    var name = "bbbbbb";
-    return name;
+    return { name : 'bbb', val : 'bbbval'};
 });

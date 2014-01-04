@@ -1,4 +1,3 @@
 define(function(){
-    var name = "sadfsaf";
-    return name;
+    return { name : 'ddd', val : 'dddval'};
 });

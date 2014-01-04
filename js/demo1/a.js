@@ -1,4 +1,1 @@
-define(function(){
-    var name = "aaaaaaaaa";
-    return name;
-});
+define({name : "aaaaaaaaa"});

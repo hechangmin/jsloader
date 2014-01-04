@@ -1,7 +1,7 @@
 
-define(function(c,d){
+define(["c","d"], function(c,d){
     return {m1 : c, m2 : d};
-},["c","d"]);
+});
 
 
 define(function(){

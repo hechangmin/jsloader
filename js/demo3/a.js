@@ -1,7 +1,7 @@
 
-define(function(x){
+define(["js/demo3/c"], function(x){
     return x;
-},["js/demo3/c"]);
+});
 
 define(function(){
     var name = "bbbbbb";

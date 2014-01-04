@@ -1,4 +1,3 @@
 define(function(){
-    var name = "cccccc";
-    return name;
+    return { name : 'ccc', val : 'cccval'};
 });
