@@ -23,22 +23,21 @@
 
         head = document.head || document.getElementsByTagName('head')[0] || document.documentElement,
         base = head.getElementsByTagName("base")[0],
-        curScript;
 
     /**
      * 适配返回值
      * @param  {Array} arrParam
      * @return 数组只有一个元素，则把元素直接返回
      */
-    var fitReturn = function(arrParam){
+    fitReturn = function(arrParam){
         if(isArray(arrParam) && 1 === arrParam.length){
             return arrParam[0];
         }else{
             return arrParam;
         }
-    };
+    },
 
-    var checkAndFixUrl = function(urls) {
+    checkAndFixUrl = function(urls) {
         var Ret = [];
         urls = 'string' === typeof urls ? [urls] : urls;
 
@@ -51,20 +50,18 @@
         }
 
         return Ret;
-    };
+    },
 
-    var loadJS = function(url) {
+    loadJS = function(url) {
         var script = document.createElement('script');
         script.charset = configs.charset;
         bindLoad(script);
         script.async = true;
         script.src = url;
-        curScript = script;
         base ? head.insertBefore(script, base) : head.appendChild(script);
-        curScript = undefined;
-    };
+    },
 
-    var bindLoad = function(script) {
+    bindLoad = function(script) {
         script.onload = script.onreadystatechange = function() {
             if (!script.readyState || /loaded|complete/.test(script.readyState)) {
 
@@ -76,16 +73,13 @@
                 script = null;
             }
         };
-    };
+    },
 
-    var getCurScript = function() {
+    getCurScript = function() {
         var stack, src, nodes;
 
-        if(curScript){
-            return curScript.src;
-        }
-
-        if (document.currentScript) { //firefox 4+
+        //firefox 4+
+        if (document.currentScript) {
             return document.currentScript.src;
         }
 
@@ -118,13 +112,13 @@
             debug('getCurScript is fail.\n')
         }
         return '';
-    };
+    },
 
-    var getBaseUrl = function() {
+    getBaseUrl = function() {
         return document.location.href.substring(0, document.location.href.lastIndexOf('/'));
-    };
+    },
 
-    var fillBasePath = function(path) {
+    fillBasePath = function(path) {
         var pattern = /(^file:\/\/)|(^http:\/\/)|(^https:\/\/)/,
             pattern2 = /(^\/)/,
             pattern3 = /(\/$)/,
@@ -153,9 +147,9 @@
         }
 
         return path;
-    };
+    },
 
-    var fillExtension = function(path) {
+    fillExtension = function(path) {
         var tempArrStr = [],
             pattern = /(\.js$)|(\.js\?)/;
 
@@ -171,9 +165,9 @@
         }
 
         return path;
-    };
+    },
 
-    var getRealPath = function(path) {
+    getRealPath = function(path) {
         var pattern1 = /\/\.\//g,
             pattern2 = /\/[^/]+\/\.\.\//;
 
@@ -184,20 +178,20 @@
         }
 
         return path;
-    };
+    },
 
-    var isType = function(type) {
+    isType = function(type) {
         return function(obj) {
             return ({}).toString.call(obj) === "[object " + type + "]";
         }
-    };
+    },
 
-    var isObject = isType("Object");
-    var isString = isType("String");
-    var isArray = Array.isArray || isType("Array");
-    var isFunction = isType("Function");
+    isObject = isType("Object"),
+    isString = isType("String"),
+    isArray = Array.isArray || isType("Array"),
+    isFunction = isType("Function"),
 
-    var debug = function(msg) {
+    debug = function(msg) {
         if (configs.isDebug) {
             if(global.console) {
                 console.error(msg);
@@ -205,9 +199,9 @@
                 alert(msg);
             }
         }
-    };
+    },
 
-    var callbackRouter = function(url) {
+    callbackRouter = function(url) {
         var curFn, urls, args = [];
 
         for(var i in fns){
@@ -235,20 +229,20 @@
                 }
             }
         }
-    };
+    },
 
     //记录依赖中的顺序
-    var logOrder = function(url, index) {
+    logOrder = function(url, index) {
 
         if (undefined == arrModOrder[url]) {
             arrModOrder[url] = [index];
         } else {
             arrModOrder[url].push(index);
         }
-    };
+    },
 
     //根据当初调用define的顺序，对模块排序
-    var sort = function(url) {
+    sort = function(url) {
 
         var mod = mods[url],
             index = arrModOrder[url],
@@ -259,24 +253,24 @@
         }
 
         return arrRet;
-    };
+    },
 
     /**
      * @description 配置
      * @param {array} opts  eg. {charset : 'utf-8', isDebug : false, alias : {}}
      */
-    var config = function(opts) {
+    config = function(opts) {
         for (var opt in opts) {
             configs[opt] = opts[opt];
         }
-    };
+    },
 
     /**
      * @description 模块定义
      * @param {array} deps 模块需要的依赖
      * @param  {Function} factory 模块构造工厂,函数则加载其执行结果，其他类型直接加载
      */
-    var define = function(deps, factory) {
+    define = function(deps, factory) {
         var url = getCurScript(), fn, urls, err = 'run the define fail. \n';
 
         try {
@@ -326,14 +320,14 @@
             err += url;
             debug(err);
         }
-    };
+    },
 
     /**
      * @description 模块引入
      * @param  {string or array} deps 单个或一组url
      * @param  {function} callback 加载完成后的回调函数
      */
-    var require = function(deps, callback) {
+    require = function(deps, callback) {
         var urls = checkAndFixUrl(deps),
             id = urls.join(separator);
 
@@ -363,8 +357,7 @@
         }
 
         //export
-        if(undefined === window.jsloader)
-        {
+        if(undefined === window.jsloader){
             window.jsloader = {
                 version : '2.0',
                 config  : config,
