@@ -129,7 +129,7 @@
 
             if(pattern3.test(base)){
                 if(pattern2.test(path)){
-                    path = base + path.substr(1);
+                    path = base + path.slice(1);
                 }else{
                     path = base + path;
                 }
