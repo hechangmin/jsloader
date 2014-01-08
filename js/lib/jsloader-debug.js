@@ -24,6 +24,11 @@
         head = document.head || document.getElementsByTagName('head')[0] || document.documentElement,
         base = head.getElementsByTagName("base")[0],
 
+    //空操作
+    noop = function(){
+
+    },
+
     /**
      * 适配返回值
      * @param  {Array} arrParam
@@ -353,7 +358,7 @@
             dataMain = loaderScript.getAttribute("data-main");
 
         if (dataMain) {
-            require(dataMain, function(){});
+            require(dataMain, noop);
         }
 
         //export
