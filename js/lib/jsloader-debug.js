@@ -46,8 +46,8 @@
         var Ret = [];
         urls = 'string' === typeof urls ? [urls] : urls;
 
-        for (var i = 0, url; url = urls[i++];) {
-            url = configs['alias'][url] ? configs['alias'][url] : url;
+        for (var i = 0, url; url = urls[i++], url;) {
+            url = configs.alias[url] ? configs.alias[url] : url;
             url = fillBasePath(url);
             url = fillExtension(url);
             url = getRealPath(url);
@@ -63,7 +63,12 @@
         bindLoad(script);
         script.async = true;
         script.src = url;
-        base ? head.insertBefore(script, base) : head.appendChild(script);
+        
+        if(base){
+            head.insertBefore(script, base);
+        }else{
+            head.appendChild(script);
+        }
     },
 
     bindLoad = function(script) {
@@ -107,14 +112,14 @@
         try {
             nodes = document.getElementsByTagName('script');
 
-            for (var i = 0, node; node = nodes[i++];) {
+            for (var i = 0, node; node = nodes[i++], node;) {
                 if (node.readyState === 'interactive') {
                     src = document.querySelector ? node.src : node.getAttribute('src', 4);
                     return src;
                 }
             }
-        } catch (e) {
-            debug('getCurScript is fail.\n')
+        } catch (err) {
+            debug('getCurScript is fail.\n');
         }
         return '';
     },
@@ -128,7 +133,7 @@
             pattern2 = /(^\/)/,
             pattern3 = /(\/$)/,
             dir_separator = '/',
-            base = configs['base'];
+            base = configs.base;
 
         if (!pattern.test(path)) {
 
@@ -188,7 +193,7 @@
     isType = function(type) {
         return function(obj) {
             return ({}).toString.call(obj) === "[object " + type + "]";
-        }
+        };
     },
 
     isObject = isType("Object"),
@@ -218,10 +223,10 @@
 
                     urls = i.split(separator);
 
-                    for (var j = 0, item; item = urls[j++];) {
-                        if (mods[item]
-                            && mods[item].length
-                            && (curModIndex[item] + 1) == mods[item].length)
+                    for (var j = 0, item; item = urls[j++], item;) {
+                        if (mods[item] && 
+                            mods[item].length &&
+                            (curModIndex[item] + 1) == mods[item].length)
                         {
                             args.push(fitReturn(sort(item)));
                         } else {
@@ -239,7 +244,7 @@
     //记录依赖中的顺序
     logOrder = function(url, index) {
 
-        if (undefined == arrModOrder[url]) {
+        if (undefined === arrModOrder[url]) {
             arrModOrder[url] = [index];
         } else {
             arrModOrder[url].push(index);
@@ -295,24 +300,24 @@
                 }
             }
 
-            if (undefined == curModIndex[url]) {
+            if (undefined === curModIndex[url]) {
                 curModIndex[url] = 0;
             } else {
                 curModIndex[url]++;
             }
 
-            if (undefined == mods[url]) {
+            if (undefined === mods[url]) {
                 mods[url] = [];
             }
 
             //有依赖的情况
-            if (undefined != urls) {
+            if (undefined !== urls) {
                 require(deps, function(url, index) {
                     return function() {
                         logOrder(url, index);
                         mods[url].push(fn.apply(null, arguments));
                         callbackRouter(url);
-                    }
+                    };
                 }(url, curModIndex[url], fn));
             } else {
                 logOrder(url, curModIndex[url]);
@@ -342,7 +347,7 @@
             debug('params[callback] error in require. \n' + id);
         }
 
-        for (var i = 0, url; url = urls[i++];) {
+        for (var i = 0, url; url = urls[i++], url;) {
             if (undefined === mods[url]) {
                 loadJS(url);
             } else {
